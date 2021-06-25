@@ -30,8 +30,8 @@
             <template slot="title">
               <i class="el-icon-document"></i>有效支票列表
             </template>
-            <el-menu-item index="userList">未提交支票</el-menu-item>
-            <el-menu-item index="shopList">已提取支票</el-menu-item>
+            <el-menu-item index="uncashList">未提交支票</el-menu-item>
+            <el-menu-item index="extractedcashList">已提取支票</el-menu-item>
           </el-submenu>
         </el-menu>
       </el-col>

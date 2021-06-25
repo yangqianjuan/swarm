@@ -12,10 +12,10 @@ const manage = r =>
   const announcementCenter = r =>
   require.ensure([], () => r(require('@/page/announcementCenter')), 'announcementCenter');
 const home = r => require.ensure([], () => r(require('@/page/home')), 'home');
-const userList = r =>
-  require.ensure([], () => r(require('@/page/userList')), 'userList');
-const shopList = r =>
-  require.ensure([], () => r(require('@/page/shopList')), 'shopList');
+const uncashList = r =>
+  require.ensure([], () => r(require('@/page/uncashList')), 'uncashList');
+const extractedcashList = r =>
+  require.ensure([], () => r(require('@/page/extractedcashList')), 'extractedcashList');
 
 const routes = [
   {
@@ -43,13 +43,13 @@ const routes = [
         meta: []
       },
       {
-        path: '/userList',
-        component: userList,
+        path: '/uncashList',
+        component: uncashList,
         meta: ['数据管理', '用户列表']
       },
       {
-        path: '/shopList',
-        component: shopList,
+        path: '/extractedcashList',
+        component: extractedcashList,
         meta: ['数据管理', '商家列表']
       }
     ]
