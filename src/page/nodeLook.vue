@@ -59,7 +59,7 @@
 
 <script>
 import headTop from "../components/headTop";
-import { adminList, adminCount } from "@/api/getData";
+import { getNodeList, getNodeDetail } from "@/api/getData";
 export default {
   data() {
     return {
@@ -122,7 +122,7 @@ export default {
         },
         {
           name: "接收总数",
-          data: 'received_total'
+          data: "received_total"
         },
         {
           name: "未提取支票数量",
@@ -135,26 +135,14 @@ export default {
     headTop
   },
   created() {
-    this.initData();
+    this.getNode()
   },
   methods: {
-    async initData() {
-      try {
-        const countData = await adminCount();
-        if (countData.status == 1) {
-          this.count = countData.count;
-        } else {
-          throw new Error("获取数据失败");
-        }
-        this.getAdmin();
-      } catch (err) {
-        console.log("获取数据失败", err);
-      }
-    },
     handleClick(row) {
       // this.selectTable = row;
       console.log(row);
       this.dialogFormVisible = true;
+      this.getDetail({ ip: row.ip, ethereum: row.ethereum });
     },
     handleClickTab() {},
     handleSizeChange(val) {
@@ -163,11 +151,14 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val;
       this.offset = (val - 1) * this.limit;
-      this.getAdmin();
+      this.getNode();
     },
-    async getAdmin() {
+    async getNode() {
       try {
-        const res = await adminList({ offset: this.offset, limit: this.limit });
+        const res = await getNodeList({
+          offset: this.offset,
+          limit: this.limit
+        });
         if (res.status == 1) {
           this.tableData = [];
           res.data.forEach(item => {
@@ -179,6 +170,18 @@ export default {
             };
             this.tableData.push(tableItem);
           });
+        } else {
+          throw new Error(res.message);
+        }
+      } catch (err) {
+        console.log("获取数据失败", err);
+      }
+    },
+    async getDetail(query) {
+      try {
+        const res = await getNodeDetail({ ...query });
+        if (res.status == 1) {
+          this.detail = res.result;
         } else {
           throw new Error(res.message);
         }

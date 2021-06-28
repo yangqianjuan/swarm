@@ -58,7 +58,7 @@ export const orderCount = date => request.get('/statis/order/' + date + '/count'
 export const adminDayCount = date => request.get('/statis/user/' + date + '/count');
 
 /**
- * 管理员列表
+ * 节点列表
  */
 
 export const adminList = data => request.get('/user/all', data);
@@ -197,6 +197,23 @@ export const getUserList = data => request.get('/v1/users/list', data);
  */
 
 export const getNodeList = data => request.get('/api/node/list', data);
+/**
+ * 获取节点详情
+ */
+
+export const getNodeDetail = data => request.get('/api/node/detail', data);
+
+/**
+ * 获取支票list
+ */
+
+export const getChequeList = data => request.get('/api/cheque/list', data);
+/**
+ * 获取支票详情
+ */
+
+export const getChequeDetail = data => request.get('/api/cheque/detail', data);
+
 
 /**
  * 获取订单列表

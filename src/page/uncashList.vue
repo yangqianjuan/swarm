@@ -1,120 +1,202 @@
 <template>
-    <div class="fillcontain">
-        <head-top></head-top>
-        <div class="table_container">
-            <el-table
-                :data="tableData"
-                highlight-current-row
-                style="width: 100%">
-                <el-table-column
-                  type="index"
-                  width="100">
-                </el-table-column>
-                <el-table-column
-                  property="registe_time"
-                  label="注册日期"
-                  width="220">
-                </el-table-column>
-                <el-table-column
-                  property="username"
-                  label="用户姓名"
-                  width="220">
-                </el-table-column>
-                <el-table-column
-                  property="city"
-                  label="注册地址">
-                </el-table-column>
-            </el-table>
-            <div class="Pagination" style="text-align: left;margin-top: 10px;">
-                <el-pagination
-                  @size-change="handleSizeChange"
-                  @current-change="handleCurrentChange"
-                  :current-page="currentPage"
-                  :page-size="20"
-                  layout="total, prev, pager, next"
-                  :total="count">
-                </el-pagination>
-            </div>
-        </div>
+  <div class="fillcontain">
+    <head-top></head-top>
+    <div class="table_container">
+      <el-table :data="tableData" style="width: 100%">
+        <el-table-column prop="Chequename" label="节点名称" width="220"></el-table-column>
+        <el-table-column prop="ip" label="ip地址" width="180"></el-table-column>
+        <el-table-column prop="hash" label="受益人"></el-table-column>
+        <el-table-column prop="issued" label="发送方(peer)"></el-table-column>
+        <el-table-column prop="received" label="支票薄（chequebook）"></el-table-column>
+        <el-table-column prop="depth" label="面额（payout）"></el-table-column>
+        <el-table-column prop="depth" label="今日新增面额"></el-table-column>
+        <el-table-column prop="timestamp" label="时间"></el-table-column>
+        <el-table-column fixed="right" label="操作" width="100">
+          <template slot-scope="scope">
+            <el-button type="text" size="small">删除</el-button>
+            <el-button @click="handleClick(scope.row)" type="text" size="small">查看详情</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="Pagination" style="text-align: left;margin-top: 10px;">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-size="20"
+          layout="total, prev, pager, next"
+          :total="count"
+        ></el-pagination>
+      </div>
     </div>
+    <el-dialog title="详细信息" :visible.sync="dialogFormVisible">
+      <el-tabs v-model="activeName" @tab-click="handleClickTab">
+        <el-tab-pane label="节点详情" name="detail">
+          <el-row style="height: 100%;background:rgba(214,233,250,.5)">
+            <el-col
+              :span="12"
+              v-for="(item,index) in detail"
+              :key="index"
+              style="border-bottom:0.5px solid rgba(151,125,125,.3)"
+            >
+              <el-row style="height:60px;line-height:60px;">
+                <el-col :span="6" style="background:#abd5f2;text-align:center">{{item.name}}</el-col>
+                <el-col :span="18" style="padding:0 5px">{{item.data}}</el-col>
+              </el-row>
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane label="连接数" name="num">连接数</el-tab-pane>
+        <el-tab-pane label="日志" name="log">日志</el-tab-pane>
+      </el-tabs>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">关 闭</el-button>
+      </div>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
-    import headTop from '../components/headTop'
-    import {getUserList, getNodeList} from '@/api/getData'
-    export default {
-        data(){
-            return {
-                tableData: [{
-                  registe_time: '2016-05-02',
-                  username: '王小虎',
-                  city: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                  registe_time: '2016-05-04',
-                  username: '王小虎',
-                  city: '上海市普陀区金沙江路 1517 弄'
-                }, {
-                  registe_time: '2016-05-01',
-                  username: '王小虎',
-                  city: '上海市普陀区金沙江路 1519 弄'
-                }, {
-                  registe_time: '2016-05-03',
-                  username: '王小虎',
-                  city: '上海市普陀区金沙江路 1516 弄'
-                }],
-                currentRow: null,
-                offset: 0,
-                limit: 20,
-                count: 0,
-                currentPage: 1,
-            }
+import headTop from "../components/headTop";
+import { getChequeList, getChequeDetail } from "@/api/getData";
+export default {
+  data() {
+    return {
+      activeName: "detail",
+      dialogFormVisible: false,
+      tableData: [{ username: "111" }],
+      currentRow: null,
+      offset: 0,
+      limit: 20,
+      count: 0,
+      currentPage: 1,
+      detail: [
+        {
+          name: "归属用户",
+          data: "username"
         },
-    	components: {
-    		headTop,
-    	},
-        created(){
-            this.initData();
+        {
+          name: "IP地址",
+          data: "ip"
         },
-        methods: {
-            async initData(){
-                try{
-                    const countData = await getNodeList();
-                    if (countData.status == 1) {
-                        this.count = countData.count;
-                    }else{
-                        throw new Error('获取数据失败');
-                    }
-                    this.getUsers();
-                }catch(err){
-                    console.log('获取数据失败', err);
-                }
-            },
-            handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
-            },
-            handleCurrentChange(val) {
-                this.currentPage = val;
-                this.offset = (val - 1)*this.limit;
-                this.getUsers()
-            },
-            async getUsers(){
-                const Users = await getUserList({offset: this.offset, limit: this.limit});
-                this.tableData = [];
-                Users.forEach(item => {
-                    const tableData = {};
-                    tableData.username = item.username;
-                    tableData.registe_time = item.registe_time;
-                    tableData.city = item.city;
-                    this.tableData.push(tableData);
-                })
-            }
+        {
+          name: "所属大洲",
+          data: "overlay"
         },
+        {
+          name: "版本号",
+          data: "version"
+        },
+        {
+          name: "总余额",
+          data: "total_money"
+        },
+        {
+          name: "发送总数",
+          data: "issued_total"
+        },
+        {
+          name: "支票地址",
+          data: "ethereum"
+        },
+        {
+          name: "钱包地址(dai)",
+          data: "ethereum"
+        },
+        {
+          name: "节点名称",
+          data: "Cheque_name"
+        },
+        {
+          name: "所属国家",
+          data: "country"
+        },
+        {
+          name: "交付时间",
+          data: "timestamp"
+        },
+        {
+          name: "实际可用余额",
+          data: "money"
+        },
+        {
+          name: "接收总数",
+          data: "received_total"
+        },
+        {
+          name: "未提取支票数量",
+          data: "uncash"
+        }
+      ]
+    };
+  },
+  components: {
+    headTop
+  },
+  created() {
+    this.getCheque()
+  },
+  methods: {
+    handleClick(row) {
+      // this.selectTable = row;
+      console.log(row);
+      this.dialogFormVisible = true;
+      this.getDetail({ ip: row.ip, ethereum: row.ethereum });
+    },
+    handleClickTab() {},
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.offset = (val - 1) * this.limit;
+      this.getCheque();
+    },
+    async getCheque() {
+      try {
+        const res = await getChequeList({
+          offset: this.offset,
+          limit: this.limit
+        });
+        if (res.status == 1) {
+          this.tableData = [];
+          res.data.forEach(item => {
+            const tableItem = {
+              create_time: item.create_time,
+              username: item.username,
+              admin: item.admin,
+              city: item.city
+            };
+            this.tableData.push(tableItem);
+          });
+        } else {
+          throw new Error(res.message);
+        }
+      } catch (err) {
+        console.log("获取数据失败", err);
+      }
+    },
+    async getDetail(query) {
+      try {
+        const res = await getChequeDetail({ ...query });
+        if (res.status == 1) {
+          this.detail = res.result;
+        } else {
+          throw new Error(res.message);
+        }
+      } catch (err) {
+        console.log("获取数据失败", err);
+      }
     }
+  }
+};
 </script>
 
 <style lang="less">
-	@import '../style/mixin';
-    .table_container{
-        padding: 20px;
-    }
+@import "../style/mixin";
+.table_container {
+  padding: 20px;
+}
 </style>
+
+

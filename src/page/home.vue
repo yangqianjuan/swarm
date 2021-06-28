@@ -94,25 +94,25 @@ export default {
   },
   mounted() {
     this.initData();
-    for (let i = 6; i > -1; i--) {
-      const date = dtime(new Date().getTime() - 86400000 * i).format(
-        "YYYY-MM-DD"
-      );
-      this.sevenDay.push(date);
-    }
-    this.getSevenData();
+    // for (let i = 6; i > -1; i--) {
+    //   const date = dtime(new Date().getTime() - 86400000 * i).format(
+    //     "YYYY-MM-DD"
+    //   );
+    //   this.sevenDay.push(date);
+    // }
+    // this.getSevenData();
   },
   computed: {},
   methods: {
     async initData() {
       const today = dtime().format("YYYY-MM-DD");
       Promise.all([
-        userCount(today),
-        orderCount(today),
-        adminDayCount(today),
+        // userCount(today),
+        // orderCount(today),
+        // adminDayCount(today),
         getNodeList(),
         getOrderCount(),
-        adminCount()
+        // adminCount()
       ])
         .then(res => {
           this.userCount = res[0].count;
