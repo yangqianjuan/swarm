@@ -13,7 +13,8 @@ const service = axios.create({
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json'
-  }
+  },
+  data:{page:1,pageSize:10}
 })
 
 // request拦截器
@@ -22,6 +23,18 @@ service.interceptors.request.use(
     if (getToken()) {
       config.headers['authorization'] = 'Bearer '+getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
     }
+    console.log(config)
+    // if (config.type == 'GET') {
+    //   let dataStr = ''; //数据拼接字符串
+    //   Object.keys(data).forEach(key => {
+    //     dataStr += key + '=' + data[key] + '&';
+    //   })
+
+    //   if (dataStr !== '') {
+    //     dataStr = dataStr.substr(0, dataStr.lastIndexOf('&'));
+    //     url = url + '?' + dataStr;
+    //   }
+    // }
     return config
   },
   error => {
