@@ -93,39 +93,25 @@ export default {
     tendency
   },
   mounted() {
-    this.initData();
-    for (let i = 6; i > -1; i--) {
-      const date = dtime(new Date().getTime() - 86400000 * i).format(
-        "YYYY-MM-DD"
-      );
-      this.sevenDay.push(date);
-    }
-    this.getSevenData();
+this.initData();
   },
   computed: {},
   methods: {
-    async initData() {
-      const today = dtime().format("YYYY-MM-DD");
-      Promise.all([
-        userCount(today),
-        orderCount(today),
-        adminDayCount(today),
-        getNodeList(),
-        getOrderCount(),
-        adminCount()
-      ])
-        .then(res => {
-          this.userCount = res[0].count;
-          this.orderCount = res[1].count;
-          this.adminCount = res[2].count;
-          this.allUserCount = res[3].count;
-          this.allOrderCount = res[4].count;
-          this.allAdminCount = res[5].count;
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
+async initData(){
+                try{
+                    const countData = await getNodeList({page:1});
+                    if (countData.status == 1) {
+                        this.count = countData.count;
+                    }else{
+                        throw new Error('获取数据失败');
+                    }
+                    this.getUsers();
+                }catch(err){
+                    console.log('获取数据失败', err);
+                }
+            },
+  handleSizeChange(){},
+  handleCurrentChange(){},
     async getSevenData() {
       const apiArr = [[], [], []];
       this.sevenDay.forEach(item => {
