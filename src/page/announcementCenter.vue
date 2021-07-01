@@ -1,147 +1,235 @@
 <template>
   <div class="fillcontain">
     <head-top></head-top>
+    <div class="search-container">
+      <el-row>
+        <el-col :span="24">
+          <el-input
+            ref="nameSelect"
+            placeholder="请输入主机名称"
+            v-model="search.name"
+            style="width:220px; height:28px;"
+            @keyup.enter.native="searchQuery"
+          ></el-input>
+          <el-input
+            ref="nameSelect"
+            placeholder="请输入ip地址"
+            v-model="search.ip"
+            style="width:220px; height:28px;"
+            @keyup.enter.native="searchQuery"
+          ></el-input>
+          <el-select
+            v-model="search.status"
+            filterable
+            placeholder="请选择节点状态"
+            clearable
+            style="width:220px; height:28px;"
+            @change="searchQuery"
+          >
+            <el-option
+              v-for="item in statusList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-col>
+      </el-row>
+    </div>
     <div class="table_container">
-      <el-table
-        :data="tableData"
-        @expand="expand"
-        :expand-row-keys="expendRow"
-        :row-key="row => row.index"
-        style="width: 100%"
-      >
-        <el-table-column type="expand">
-          <template slot-scope="props">
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="用户名">
-                <span>{{ props.row.username }}</span>
-              </el-form-item>
-              <el-form-item label="店铺名称">
-                <span>{{ props.row.restaurant_name }}</span>
-              </el-form-item>
-              <el-form-item label="收货地址">
-                <span>{{ props.row.address }}</span>
-              </el-form-item>
-              <el-form-item label="店铺 ID">
-                <span>{{ props.row.restaurant_id }}</span>
-              </el-form-item>
-              <el-form-item label="店铺地址">
-                <span>{{ props.row.restaurant_address }}</span>
-              </el-form-item>
-            </el-form>
+      <el-table :data="tableData" style="width: 100%">
+        <el-table-column prop="username" label="归属用户"></el-table-column>
+        <el-table-column prop="nodename" label="节点名称"></el-table-column>
+        <el-table-column prop="ip" label="ip地址"></el-table-column>
+        <el-table-column prop="auth" label="权限"></el-table-column>
+        <el-table-column prop="version" label="版本"></el-table-column>
+        <el-table-column prop="depth" label="BZZ数量"></el-table-column>
+        <el-table-column prop="peers" label="连接数"></el-table-column>
+        <el-table-column prop="uncash" label="未提取支票数量"></el-table-column>
+        <el-table-column prop="timestamp" label="交付时间"></el-table-column>
+        <el-table-column fixed="right" label="操作" width="180">
+          <template slot-scope="scope">
+            <el-button type="text" size="small">删除</el-button>
+            <el-button @click="handleClick(scope.row)" type="text" size="small"
+              >查看详情</el-button
+            >
           </template>
         </el-table-column>
-        <el-table-column label="订单 ID" prop="id"></el-table-column>
-        <el-table-column label="总价格" prop="total_amount"></el-table-column>
-        <el-table-column label="订单状态" prop="status"></el-table-column>
       </el-table>
       <div class="Pagination" style="text-align: left;margin-top: 10px;">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-size="20"
-          layout="total, prev, pager, next"
-          :total="count"
-        ></el-pagination>
+        <pagination
+          v-if="pageshow && page.total > 0"
+          :total="page.total"
+          :page.sync="page.currentPage"
+          :limit.sync="page.pageSize"
+          @pagination="handlePageChange"
+          :size="10"
+        ></pagination>
       </div>
     </div>
+    <el-dialog title="详细信息" :visible.sync="dialogFormVisible">
+      <el-tabs v-model="activeName" @tab-click="handleClickTab">
+        <el-tab-pane label="节点详情" name="detail">
+          <el-row style="height: 100%;background:rgba(214,233,250,.5)">
+            <el-col
+              :span="12"
+              v-for="(item, index) in detail"
+              :key="index"
+              style="border-bottom:0.5px solid rgba(151,125,125,.3)"
+            >
+              <el-row style="height:60px;line-height:60px;">
+                <el-col
+                  :span="6"
+                  style="background:#abd5f2;text-align:center"
+                  >{{ item.name }}</el-col
+                >
+                <el-col :span="18" style="padding:0 5px">{{
+                  item.data
+                }}</el-col>
+              </el-row>
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane label="连接数" name="num">连接数</el-tab-pane>
+        <el-tab-pane label="日志" name="log">日志</el-tab-pane>
+      </el-tabs>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">关 闭</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import headTop from "../components/headTop";
-import {
-  getOrderList,
-  getOrderCount,
-  getResturantDetail,
-  getUserInfo,
-  getAddressById
-} from "@/api/getData";
+import Pagination from "@/components/Pagination";
+import { getNodeList, getNodeDetail } from "@/api/getData";
 export default {
   data() {
     return {
-      tableData: [],
-      currentRow: null,
-      offset: 0,
-      limit: 20,
-      count: 0,
-      currentPage: 1,
-      restaurant_id: null,
-      expendRow: []
+      activeName: "detail",
+      dialogFormVisible: false,
+      tableData: [{ username: "111" }],
+      statusList: [
+        { label: "启动", value: 1 },
+        { label: "建账", value: 2 },
+        { label: "充值", value: 3 },
+        { label: "异常", value: 4 },
+        { label: "部署", value: 5 }
+      ],
+      search: {},
+      pageshow: true,
+      page: {
+        pageSize: 10,
+        total: 20,
+        currentPage: 1
+      },
+      detail: [
+        {
+          name: "归属用户",
+          data: "username"
+        },
+        {
+          name: "IP地址",
+          data: "ip"
+        },
+        {
+          name: "所属大洲",
+          data: "overlay"
+        },
+        {
+          name: "版本号",
+          data: "version"
+        },
+        {
+          name: "总余额",
+          data: "total_money"
+        },
+        {
+          name: "发送总数",
+          data: "issued_total"
+        },
+        {
+          name: "支票地址",
+          data: "ethereum"
+        },
+        {
+          name: "钱包地址(dai)",
+          data: "ethereum"
+        },
+        {
+          name: "节点名称",
+          data: "node_name"
+        },
+        {
+          name: "所属国家",
+          data: "country"
+        },
+        {
+          name: "交付时间",
+          data: "timestamp"
+        },
+        {
+          name: "实际可用余额",
+          data: "money"
+        },
+        {
+          name: "接收总数",
+          data: "received_total"
+        },
+        {
+          name: "未提取支票数量",
+          data: "uncash"
+        }
+      ]
     };
   },
   components: {
-    headTop
+    headTop,
+    Pagination
   },
   created() {
-    this.restaurant_id = this.$route.query.restaurant_id;
-    this.initData();
+    this.getNode();
   },
-  mounted() {},
   methods: {
-    async initData() {
+    handleClick(row) {
+      // this.selectTable = row;
+      console.log(row);
+      this.dialogFormVisible = true;
+      this.getDetail({ ip: row.ip, ethereum: row.ethereum });
+    },
+    handleClickTab() {},
+    handlePageChange(val) {
+      this.getNode();
+    },
+    searchQuery() {
+      this.getNode();
+    },
+    async getNode() {
       try {
-        const countData = await getOrderCount({
-          restaurant_id: this.restaurant_id
+        const res = await getNodeList({
+          page: this.page.currentPage,
+          pageSize: this.page.pageSize
         });
-        if (countData.status == 1) {
-          this.count = countData.count;
+        if (res.status == 1) {
+          this.tableData = res.result;
         } else {
-          throw new Error("获取数据失败");
+          throw new Error(res.message);
         }
-        this.getOrders();
       } catch (err) {
         console.log("获取数据失败", err);
       }
     },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
-    handleCurrentChange(val) {
-      this.currentPage = val;
-      this.offset = (val - 1) * this.limit;
-      this.getOrders();
-    },
-    async getOrders() {
-      const Orders = await getOrderList({
-        offset: this.offset,
-        limit: this.limit,
-        restaurant_id: this.restaurant_id
-      });
-      this.tableData = [];
-      Orders.forEach((item, index) => {
-        const tableData = {};
-        tableData.id = item.id;
-        tableData.total_amount = item.total_amount;
-        tableData.status = item.status_bar.title;
-        tableData.user_id = item.user_id;
-        tableData.restaurant_id = item.restaurant_id;
-        tableData.address_id = item.address_id;
-        tableData.index = index;
-        this.tableData.push(tableData);
-      });
-    },
-    async expand(row, status) {
-      if (status) {
-        const restaurant = await getResturantDetail(row.restaurant_id);
-        const userInfo = await getUserInfo(row.user_id);
-        const addressInfo = await getAddressById(row.address_id);
-
-        this.tableData.splice(row.index, 1, {
-          ...row,
-          ...{
-            restaurant_name: restaurant.name,
-            restaurant_address: restaurant.address,
-            address: addressInfo.address,
-            username: userInfo.username
-          }
-        });
-        this.$nextTick(() => {
-          this.expendRow.push(row.index);
-        });
-      } else {
-        const index = this.expendRow.indexOf(row.index);
-        this.expendRow.splice(index, 1);
+    async getDetail(query) {
+      try {
+        const res = await getNodeDetail({ ...query });
+        if (res.status == 1) {
+          this.detail = res.result;
+        } else {
+          throw new Error(res.message);
+        }
+      } catch (err) {
+        console.log("获取数据失败", err);
       }
     }
   }
@@ -152,17 +240,5 @@ export default {
 @import "../style/mixin";
 .table_container {
   padding: 20px;
-}
-.demo-table-expand {
-  font-size: 0;
-}
-.demo-table-expand label {
-  width: 90px;
-  color: #99a9bf;
-}
-.demo-table-expand .el-form-item {
-  margin-right: 0;
-  margin-bottom: 0;
-  width: 50%;
 }
 </style>

@@ -1,56 +1,64 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import Vue from "vue";
+import Router from "vue-router";
 
-Vue.use(Router)
+Vue.use(Router);
 
 const login = r =>
-  require.ensure([], () => r(require('@/page/login')), 'login');
+  require.ensure([], () => r(require("@/page/login")), "login");
 const manage = r =>
-  require.ensure([], () => r(require('@/page/manage')), 'manage');
-  const nodeLook = r =>
-  require.ensure([], () => r(require('@/page/nodeLook')), 'nodeLook');
-  const announcementCenter = r =>
-  require.ensure([], () => r(require('@/page/announcementCenter')), 'announcementCenter');
-const home = r => require.ensure([], () => r(require('@/page/home')), 'home');
+  require.ensure([], () => r(require("@/page/manage")), "manage");
+const nodeLook = r =>
+  require.ensure([], () => r(require("@/page/nodeLook")), "nodeLook");
+const announcementCenter = r =>
+  require.ensure(
+    [],
+    () => r(require("@/page/announcementCenter")),
+    "announcementCenter"
+  );
+const home = r => require.ensure([], () => r(require("@/page/home")), "home");
 const uncashList = r =>
-  require.ensure([], () => r(require('@/page/uncashList')), 'uncashList');
+  require.ensure([], () => r(require("@/page/uncashList")), "uncashList");
 const extractedcashList = r =>
-  require.ensure([], () => r(require('@/page/extractedcashList')), 'extractedcashList');
+  require.ensure(
+    [],
+    () => r(require("@/page/extractedcashList")),
+    "extractedcashList"
+  );
 
 const routes = [
   {
-    path: '/',
+    path: "/",
     component: login
   },
   {
-    path: '/manage',
+    path: "/manage",
     component: manage,
-    name: '',
+    name: "",
     children: [
       {
-        path: '',
+        path: "",
         component: home,
         meta: []
       },
       {
-        path: '/announcementCenter',
+        path: "/announcementCenter",
         component: announcementCenter,
-        meta: []
+        meta: ["公告中心"]
       },
       {
-        path: '/nodeLook',
+        path: "/nodeLook",
         component: nodeLook,
-        meta: []
+        meta: ["节点查看"]
       },
       {
-        path: '/uncashList',
+        path: "/uncashList",
         component: uncashList,
-        meta: ['数据管理', '用户列表']
+        meta: ["有效支票列表", "未提交支票"]
       },
       {
-        path: '/extractedcashList',
+        path: "/extractedcashList",
         component: extractedcashList,
-        meta: ['数据管理', '商家列表']
+        meta: ["有效支票列表", "已提取支票"]
       }
     ]
   }
@@ -58,5 +66,5 @@ const routes = [
 
 export default new Router({
   routes,
-  strict: process.env.NODE_ENV !== 'production'
+  strict: process.env.NODE_ENV !== "production"
 });

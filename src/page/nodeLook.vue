@@ -38,25 +38,35 @@
     </div>
     <div class="table_container">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="username" label="归属用户" width="180"></el-table-column>
-        <el-table-column prop="nodename" label="节点名称" width="220"></el-table-column>
-        <el-table-column prop="ip" label="ip地址" width="180"></el-table-column>
+        <el-table-column
+          prop="username"
+          label="归属用户"
+          width="180"
+        ></el-table-column>
+        <el-table-column
+          prop="nodename"
+          label="节点名称"
+          width="220"
+        ></el-table-column>
+        <el-table-column prop="ip" label="ip地址"></el-table-column>
         <el-table-column prop="auth" label="权限"></el-table-column>
         <el-table-column prop="version" label="版本"></el-table-column>
         <el-table-column prop="depth" label="BZZ数量"></el-table-column>
         <el-table-column prop="peers" label="连接数"></el-table-column>
         <el-table-column prop="uncash" label="未提取支票数量"></el-table-column>
         <el-table-column prop="timestamp" label="交付时间"></el-table-column>
-        <el-table-column fixed="right" label="操作" width="100">
+        <el-table-column fixed="right" label="操作" width="180">
           <template slot-scope="scope">
             <el-button type="text" size="small">删除</el-button>
-            <el-button @click="handleClick(scope.row)" type="text" size="small">查看详情</el-button>
+            <el-button @click="handleClick(scope.row)" type="text" size="small"
+              >查看详情</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
       <div class="Pagination" style="text-align: left;margin-top: 10px;">
         <pagination
-          v-if="pageshow && page.total>0"
+          v-if="pageshow && page.total > 0"
           :total="page.total"
           :page.sync="page.currentPage"
           :limit.sync="page.pageSize"
@@ -71,13 +81,19 @@
           <el-row style="height: 100%;background:rgba(214,233,250,.5)">
             <el-col
               :span="12"
-              v-for="(item,index) in detail"
+              v-for="(item, index) in detail"
               :key="index"
               style="border-bottom:0.5px solid rgba(151,125,125,.3)"
             >
               <el-row style="height:60px;line-height:60px;">
-                <el-col :span="6" style="background:#abd5f2;text-align:center">{{item.name}}</el-col>
-                <el-col :span="18" style="padding:0 5px">{{item.data}}</el-col>
+                <el-col
+                  :span="6"
+                  style="background:#abd5f2;text-align:center"
+                  >{{ item.name }}</el-col
+                >
+                <el-col :span="18" style="padding:0 5px">{{
+                  item.data
+                }}</el-col>
               </el-row>
             </el-col>
           </el-row>
@@ -198,14 +214,20 @@ export default {
       this.getNode();
     },
     async getNode() {
+      const payload = {
+        page: this.page.currentPage,
+        size: this.page.pageSize,
+        ip: this.search.ip,
+        name: this.search.name,
+        status: this.search.status
+      };
+      for (let key in payload) {
+        if (!payload[key]) {
+          delete payload[key];
+        }
+      }
       try {
-        const res = await getNodeList({
-          page: this.page.currentPage,
-          size: this.page.pageSize,
-          ip: this.search.ip,
-          name: this.search.name,
-          status: this.search.status
-        });
+        const res = await getNodeList(payload);
         if (res.status == 1) {
           this.tableData = res.result;
         } else {
@@ -237,5 +259,3 @@ export default {
   padding: 20px;
 }
 </style>
-
-

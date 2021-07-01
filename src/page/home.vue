@@ -32,10 +32,22 @@
       <div>| 节点列表</div>
       <el-table :data="tableData" highlight-current-row style="width: 100%">
         <el-table-column type="index" width="100"></el-table-column>
-        <el-table-column property="name" label="节点名称" width="220"></el-table-column>
-        <el-table-column property="ip" label="IP地址" width="220"></el-table-column>
+        <el-table-column
+          property="name"
+          label="节点名称"
+          width="220"
+        ></el-table-column>
+        <el-table-column
+          property="ip"
+          label="IP地址"
+          width="220"
+        ></el-table-column>
         <el-table-column property="status" label="状态"></el-table-column>
-        <el-table-column property="uncash" label="未提取支票数量" width="220"></el-table-column>
+        <el-table-column
+          property="uncash"
+          label="未提取支票数量"
+          width="220"
+        ></el-table-column>
         <el-table-column property="ethereum" label="支票地址"></el-table-column>
       </el-table>
       <div class="Pagination" style="text-align: left;margin-top: 10px;">
@@ -55,6 +67,7 @@
 <script>
 import headTop from "../components/headTop";
 import tendency from "../components/tendency";
+import Pagination from "@/components/Pagination";
 import { getNodeList } from "@/api/getData";
 export default {
   data() {
@@ -65,37 +78,42 @@ export default {
           ip: "上海市普陀区金沙江路 1518 弄"
         }
       ],
-      currentRow: null,
-      offset: 0,
-      limit: 20,
-      count: 0,
-      currentPage: 1
+      page: {
+        pageSize: 10,
+        total: 20,
+        currentPage: 1
+      }
     };
   },
   components: {
     headTop,
-    tendency
+    tendency,
+    Pagination
   },
   mounted() {
-    this.initData();
+    this.getNode();
   },
   computed: {},
   computed: {},
   methods: {
-    async initData() {
+    async getNode() {
       try {
-        const countData = await getNodeList({ page: 1 });
-        if (countData.status == 1) {
-          this.count = countData.count;
+        const res = await getNodeList({
+          page: this.page.currentPage,
+          pageSize: this.page.pageSize
+        });
+        if (res.status == 1) {
+          this.tableData = res.result;
         } else {
-          throw new Error("获取数据失败");
+          throw new Error(res.message);
         }
       } catch (err) {
         console.log("获取数据失败", err);
       }
     },
-    handleSizeChange() {},
-    handleCurrentChange() {}
+    handlePageChange(val) {
+      this.getNode();
+    }
   }
 };
 </script>
