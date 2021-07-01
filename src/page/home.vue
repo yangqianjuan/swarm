@@ -55,26 +55,10 @@
 <script>
 import headTop from "../components/headTop";
 import tendency from "../components/tendency";
-import dtime from "time-formater";
-import {
-  userCount,
-  orderCount,
-  getNodeList,
-  getOrderCount,
-  adminDayCount,
-  adminCount
-} from "@/api/getData";
+import { getNodeList } from "@/api/getData";
 export default {
   data() {
     return {
-      userCount: null,
-      orderCount: null,
-      adminCount: null,
-      allUserCount: null,
-      allOrderCount: null,
-      allAdminCount: null,
-      sevenDay: [],
-      sevenDate: [[], [], []],
       tableData: [
         {
           name: "王小虎",
@@ -106,35 +90,12 @@ export default {
         } else {
           throw new Error("获取数据失败");
         }
-        this.getUsers();
       } catch (err) {
         console.log("获取数据失败", err);
       }
     },
     handleSizeChange() {},
-    handleCurrentChange() {},
-    async getSevenData() {
-      const apiArr = [[], [], []];
-      this.sevenDay.forEach(item => {
-        apiArr[0].push(userCount(item));
-        apiArr[1].push(orderCount(item));
-        apiArr[2].push(adminDayCount(item));
-      });
-      const promiseArr = [...apiArr[0], ...apiArr[1], ...apiArr[2]];
-      Promise.all(promiseArr)
-        .then(res => {
-          const resArr = [[], [], []];
-          res.forEach((item, index) => {
-            if (item.status == 1) {
-              resArr[Math.floor(index / 7)].push(item.count);
-            }
-          });
-          this.sevenDate = resArr;
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    }
+    handleCurrentChange() {}
   }
 };
 </script>

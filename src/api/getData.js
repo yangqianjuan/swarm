@@ -1,79 +1,80 @@
 
-import request from '@/utils/request'
+// import request from '@/utils/request'
+import fetch from '@/config/fetch'
 
 /**
  * 登陆
  */
 
-export const login = data => request.post('/user/login', data);
+export const login = data => fetch('/user/login', data);
 
 /**
  * 退出
  */
 
-export const signout = () => request.get('/user/signout');
+export const signout = () => fetch('/user/signout');
 
 /**
  * 获取用户信息
  */
 
-export const getAdminInfo = () => request.get('/user/info');
+export const getAdminInfo = () => fetch('/user/info');
 
 /**
  * api请求量
  */
 
-export const apiCount = date => request.get('/statis/api/' + date + '/count');
+export const apiCount = date => fetch('/statis/api/' + date + '/count');
 
 /**
  * 所有api请求量
  */
 
-export const apiAllCount = () => request.get('/statis/api/count');
+export const apiAllCount = () => fetch('/statis/api/count');
 
 
 /**
  * 所有api请求信息
  */
 
-export const apiAllRecord = () => request.get('/statis/api/all');
+export const apiAllRecord = () => fetch('/statis/api/all');
 
 /**
  * 用户注册量
  */
 
-export const userCount = date => request.get('/statis/user/' + date + '/count');
+export const userCount = date => fetch('/statis/user/' + date + '/count');
 
 /**
  * 某一天订单数量
  */
 
-export const orderCount = date => request.get('/statis/order/' + date + '/count');
+export const orderCount = date => fetch('/statis/order/' + date + '/count');
 
 
 /**
  * 某一天管理员注册量
  */
 
-export const adminDayCount = date => request.get('/statis/user/' + date + '/count');
+export const adminDayCount = date => fetch('/statis/user/' + date + '/count');
 
 /**
  * 节点列表
  */
 
-export const adminList = data => request.get('/user/all', data);
+export const adminList = data => fetch('/user/all', data);
 
 /**
  * 管理员数量
  */
 
-export const adminCount = () => request.get('/user/count');
+export const adminCount = () => fetch('/user/count');
 
 /**
  * 获取定位城市
  */
 
-export const cityGuess = () => request.get('/v1/cities', {
+export const cityGuess = () => fetch('/v1/cities', {
 	type: 'guess'
 });
 
@@ -81,13 +82,13 @@ export const cityGuess = () => request.get('/v1/cities', {
  * 添加商铺
  */
 
-export const addShop = data => request.get('/shopping/addShop', data, 'POST');
+export const addShop = data => fetch('/shopping/addShop', data, 'POST');
 
 /**
  * 获取搜索地址
  */
 
-export const searchplace = (cityid, value) => request.get('/v1/pois', {
+export const searchplace = (cityid, value) => fetch('/v1/pois', {
 	type: 'search',
 	city_id: cityid,
 	keyword: value
@@ -97,150 +98,150 @@ export const searchplace = (cityid, value) => request.get('/v1/pois', {
  * 获取当前店铺食品种类
  */
 
-export const getCategory = restaurant_id => request.get('/shopping/getcategory/' + restaurant_id);
+export const getCategory = restaurant_id => fetch('/shopping/getcategory/' + restaurant_id);
 
 /**
  * 添加食品种类
  */
 
-export const addCategory = data => request.get('/shopping/addcategory', data, 'POST');
+export const addCategory = data => fetch('/shopping/addcategory', data, 'POST');
 
 
 /**
  * 添加食品
  */
 
-export const addFood = data => request.post('/shopping/addfood', data, 'POST');
+export const addFood = data => fetch('/shopping/addfood', data, 'POST');
 
 
 /**
  * category 种类列表
  */
 
-export const foodCategory = (latitude, longitude) => request.get('/shopping/v2/restaurant/category');
+export const foodCategory = (latitude, longitude) => fetch('/shopping/v2/restaurant/category');
 
 /**
  * 获取餐馆列表
  */
 
-export const getResturants = data => request.get('/shopping/restaurants', data);
+export const getResturants = data => fetch('/shopping/restaurants', data);
 
 /**
  * 获取餐馆详细信息
  */
 
-export const getResturantDetail = restaurant_id => request.get('/shopping/restaurant/' + restaurant_id);
+export const getResturantDetail = restaurant_id => fetch('/shopping/restaurant/' + restaurant_id);
 
 /**
  * 获取餐馆数量
  */
 
-export const getResturantsCount = () => request.get('/shopping/restaurants/count');
+export const getResturantsCount = () => fetch('/shopping/restaurants/count');
 
 /**
  * 更新餐馆信息
  */
 
-export const updateResturant = data => request.get('/shopping/updateshop', data, 'POST');
+export const updateResturant = data => fetch('/shopping/updateshop', data, 'POST');
 
 /**
  * 删除餐馆
  */
 
-export const deleteResturant = restaurant_id => request.get('/shopping/restaurant/' + restaurant_id, {}, 'DELETE');
+export const deleteResturant = restaurant_id => fetch('/shopping/restaurant/' + restaurant_id, {}, 'DELETE');
 
 /**
  * 获取食品列表
  */
 
-export const getFoods = data => request.get('/shopping/v2/foods', data);
+export const getFoods = data => fetch('/shopping/v2/foods', data);
 
 /**
  * 获取食品数量
  */
 
-export const getFoodsCount = data => request.get('/article/list', data);
+export const getFoodsCount = data => fetch('/article/list', data);
 
-export const addFoodsCount = data => request.post('/article/add', data);
+export const addFoodsCount = data => fetch('/article/add', data);
 /**
  * 获取menu列表
  */
 
-export const getMenu = data => request.get('/shopping/v2/menu', data);
+export const getMenu = data => fetch('/shopping/v2/menu', data);
 
 /**
  * 获取menu详情
  */
 
-export const getMenuById = category_id => request.get('/shopping/v2/menu/' + category_id);
+export const getMenuById = category_id => fetch('/shopping/v2/menu/' + category_id);
 
 /**
  * 更新食品信息
  */
 
-export const updateFood = data => request.get('/shopping/v2/updatefood', data, 'POST');
+export const updateFood = data => fetch('/shopping/v2/updatefood', data, 'POST');
 
 /**
  * 删除食品
  */
 
-export const deleteFood = food_id => request.get('/shopping/v2/food/' + food_id, {}, 'DELETE');
+export const deleteFood = food_id => fetch('/shopping/v2/food/' + food_id, {}, 'DELETE');
 
 /**
  * 获取用户列表
  */
 
-export const getUserList = data => request.get('/v1/users/list', data);
+export const getUserList = data => fetch('/v1/users/list', data);
 
 /**
  * 获取节点list
  */
 
-export const getNodeList = data => request.get('/api/node/list', data);
+export const getNodeList = data => fetch('/api/node/list', data);
 /**
  * 获取节点详情
  */
 
-export const getNodeDetail = data => request.get('/api/node/detail', data);
+export const getNodeDetail = data => fetch('/api/node/detail', data);
 
 /**
  * 获取支票list
  */
 
-export const getChequeList = data => request.get('/api/cheque/list', data);
+export const getChequeList = data => fetch('/api/cheque/list', data);
 /**
  * 获取支票详情
  */
 
-export const getChequeDetail = data => request.get('/api/cheque/detail', data);
+export const getChequeDetail = data => fetch('/api/cheque/detail', data);
 
 
 /**
  * 获取订单列表
  */
 
-export const getOrderList = data => request.get('/bos/orders', data);
+export const getOrderList = data => fetch('/bos/orders', data);
 
 /**
  * 获取订单数量
  */
 
-export const getOrderCount = data => request.get('/bos/orders/count', data);
+export const getOrderCount = data => fetch('/bos/orders/count', data);
 
 /**
  * 获取用户信息
  */
 
-export const getUserInfo = user_id => request.get('/v1/user/' + user_id);
+export const getUserInfo = user_id => fetch('/v1/user/' + user_id);
 
 /**
  * 获取地址信息
  */
 
-export const getAddressById = address_id => request.get('/v1/addresse/' + address_id);
+export const getAddressById = address_id => fetch('/v1/addresse/' + address_id);
 
 /**
  * 获取用户分布信息
  */
 
-export const getUserCity = () => request.get('/v1/user/city/count');
+export const getUserCity = () => fetch('/v1/user/city/count');

@@ -1,6 +1,26 @@
 <template>
   <div class="fillcontain">
     <head-top></head-top>
+    <div class="search-container">
+      <el-row>
+        <el-col :span="24">
+          <el-input
+            ref="nameSelect"
+            placeholder="请输入主机名称"
+            v-model="search.name"
+            style="width:220px; height:28px;"
+            @keyup.enter.native="searchQuery"
+          ></el-input>
+          <el-input
+            ref="nameSelect"
+            placeholder="请输入ip地址"
+            v-model="search.ip"
+            style="width:220px; height:28px;"
+            @keyup.enter.native="searchQuery"
+          ></el-input>
+        </el-col>
+      </el-row>
+    </div>
     <div class="table_container">
       <el-table :data="tableData" style="width: 100%">
         <el-table-column prop="Chequename" label="节点名称" width="220"></el-table-column>
@@ -18,14 +38,14 @@
         </el-table-column>
       </el-table>
       <div class="Pagination" style="text-align: left;margin-top: 10px;">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-size="20"
-          layout="total, prev, pager, next"
-          :total="count"
-        ></el-pagination>
+        <pagination
+          v-if="pageshow && page.total>0"
+          :total="page.total"
+          :page.sync="page.currentPage"
+          :limit.sync="page.pageSize"
+          @pagination="handlePageChange"
+          :size="10"
+        ></pagination>
       </div>
     </div>
     <el-dialog title="详细信息" :visible.sync="dialogFormVisible">
@@ -57,6 +77,7 @@
 
 <script>
 import headTop from "../components/headTop";
+import Pagination from "@/components/Pagination";
 import { getChequeList, getChequeDetail } from "@/api/getData";
 export default {
   data() {
@@ -64,6 +85,13 @@ export default {
       activeName: "detail",
       dialogFormVisible: false,
       tableData: [{ username: "111" }],
+      search: {},
+      pageshow: true,
+      page: {
+        pageSize: 10,
+        total: 20,
+        currentPage: 1
+      },
       currentRow: null,
       offset: 0,
       limit: 20,
@@ -130,10 +158,11 @@ export default {
     };
   },
   components: {
-    headTop
+    headTop,
+    Pagination
   },
   created() {
-    this.getCheque()
+    this.getCheque();
   },
   methods: {
     handleClick(row) {
@@ -143,19 +172,16 @@ export default {
       this.getDetail({ ip: row.ip, ethereum: row.ethereum });
     },
     handleClickTab() {},
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
-    handleCurrentChange(val) {
-      this.currentPage = val;
-      this.offset = (val - 1) * this.limit;
+    handlePageChange(val) {
       this.getCheque();
     },
     async getCheque() {
       try {
         const res = await getChequeList({
-          offset: this.offset,
-          limit: this.limit
+          page: this.page.currentPage,
+          size: this.page.pageSize,
+          ip: this.search.ip,
+          name: this.search.name
         });
         if (res.status == 1) {
           this.tableData = [];

@@ -1,6 +1,41 @@
 <template>
   <div class="fillcontain">
     <head-top></head-top>
+    <div class="search-container">
+      <el-row>
+        <el-col :span="24">
+          <el-input
+            ref="nameSelect"
+            placeholder="请输入主机名称"
+            v-model="search.name"
+            style="width:220px; height:28px;"
+            @keyup.enter.native="searchQuery"
+          ></el-input>
+          <el-input
+            ref="nameSelect"
+            placeholder="请输入ip地址"
+            v-model="search.ip"
+            style="width:220px; height:28px;"
+            @keyup.enter.native="searchQuery"
+          ></el-input>
+          <el-select
+            v-model="search.status"
+            filterable
+            placeholder="请选择节点状态"
+            clearable
+            style="width:220px; height:28px;"
+            @change="searchQuery"
+          >
+            <el-option
+              v-for="item in statusList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-col>
+      </el-row>
+    </div>
     <div class="table_container">
       <el-table :data="tableData" style="width: 100%">
         <el-table-column prop="username" label="归属用户" width="180"></el-table-column>
@@ -20,14 +55,14 @@
         </el-table-column>
       </el-table>
       <div class="Pagination" style="text-align: left;margin-top: 10px;">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-size="20"
-          layout="total, prev, pager, next"
-          :total="count"
-        ></el-pagination>
+        <pagination
+          v-if="pageshow && page.total>0"
+          :total="page.total"
+          :page.sync="page.currentPage"
+          :limit.sync="page.pageSize"
+          @pagination="handlePageChange"
+          :size="10"
+        ></pagination>
       </div>
     </div>
     <el-dialog title="详细信息" :visible.sync="dialogFormVisible">
@@ -59,6 +94,7 @@
 
 <script>
 import headTop from "../components/headTop";
+import Pagination from "@/components/Pagination";
 import { getNodeList, getNodeDetail } from "@/api/getData";
 export default {
   data() {
@@ -66,11 +102,20 @@ export default {
       activeName: "detail",
       dialogFormVisible: false,
       tableData: [{ username: "111" }],
-      currentRow: null,
-      offset: 0,
-      limit: 20,
-      count: 0,
-      currentPage: 1,
+      statusList: [
+        { label: "启动", value: 1 },
+        { label: "建账", value: 2 },
+        { label: "充值", value: 3 },
+        { label: "异常", value: 4 },
+        { label: "部署", value: 5 }
+      ],
+      search: {},
+      pageshow: true,
+      page: {
+        pageSize: 10,
+        total: 20,
+        currentPage: 1
+      },
       detail: [
         {
           name: "归属用户",
@@ -132,10 +177,11 @@ export default {
     };
   },
   components: {
-    headTop
+    headTop,
+    Pagination
   },
   created() {
-    this.getNode()
+    this.getNode();
   },
   methods: {
     handleClick(row) {
@@ -145,31 +191,23 @@ export default {
       this.getDetail({ ip: row.ip, ethereum: row.ethereum });
     },
     handleClickTab() {},
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+    handlePageChange(val) {
+      this.getNode();
     },
-    handleCurrentChange(val) {
-      this.currentPage = val;
-      this.offset = (val - 1) * this.limit;
+    searchQuery() {
       this.getNode();
     },
     async getNode() {
       try {
         const res = await getNodeList({
-          offset: this.offset,
-          limit: this.limit
+          page: this.page.currentPage,
+          size: this.page.pageSize,
+          ip: this.search.ip,
+          name: this.search.name,
+          status: this.search.status
         });
         if (res.status == 1) {
-          this.tableData = [];
-          res.data.forEach(item => {
-            const tableItem = {
-              create_time: item.create_time,
-              username: item.username,
-              admin: item.admin,
-              city: item.city
-            };
-            this.tableData.push(tableItem);
-          });
+          this.tableData = res.result;
         } else {
           throw new Error(res.message);
         }
