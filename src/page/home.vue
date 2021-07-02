@@ -33,9 +33,10 @@
       <el-table :data="tableData" highlight-current-row style="width: 100%">
         <el-table-column type="index" width="100"></el-table-column>
         <el-table-column
-          property="name"
-          label="节点名称"
+          prop="ethereum"
+          label="以太坊地址"
           width="220"
+          :show-overflow-tooltip="true"
         ></el-table-column>
         <el-table-column
           property="ip"
@@ -54,7 +55,7 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage"
+          :current-page="page"
           :page-size="20"
           layout="total, prev, pager, next"
           :total="count"
@@ -81,7 +82,7 @@ export default {
       page: {
         pageSize: 10,
         total: 20,
-        currentPage: 1
+        page: 1
       }
     };
   },
@@ -99,11 +100,13 @@ export default {
     async getNode() {
       try {
         const res = await getNodeList({
-          page: this.page.currentPage,
+          page: this.page.page,
           pageSize: this.page.pageSize
         });
-        if (res.status == 1) {
-          this.tableData = res.result;
+        if (res.code == 200) {
+          const { list, ...page } = res.result;
+          this.tableData = list;
+          this.page = page;
         } else {
           throw new Error(res.message);
         }

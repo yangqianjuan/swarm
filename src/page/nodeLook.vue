@@ -6,8 +6,8 @@
         <el-col :span="24">
           <el-input
             ref="nameSelect"
-            placeholder="请输入主机名称"
-            v-model="search.name"
+            placeholder="请输入以太坊地址"
+            v-model="search.ethereum"
             style="width:220px; height:28px;"
             @keyup.enter.native="searchQuery"
           ></el-input>
@@ -44,9 +44,10 @@
           width="180"
         ></el-table-column>
         <el-table-column
-          prop="nodename"
-          label="节点名称"
+          prop="ethereum"
+          label="以太坊地址"
           width="220"
+          :show-overflow-tooltip="true"
         ></el-table-column>
         <el-table-column prop="ip" label="ip地址"></el-table-column>
         <el-table-column prop="auth" label="权限"></el-table-column>
@@ -57,7 +58,6 @@
         <el-table-column prop="timestamp" label="交付时间"></el-table-column>
         <el-table-column fixed="right" label="操作" width="180">
           <template slot-scope="scope">
-            <el-button type="text" size="small">删除</el-button>
             <el-button @click="handleClick(scope.row)" type="text" size="small"
               >查看详情</el-button
             >
@@ -68,7 +68,7 @@
         <pagination
           v-if="pageshow && page.total > 0"
           :total="page.total"
-          :page.sync="page.currentPage"
+          :page.sync="page.page"
           :limit.sync="page.pageSize"
           @pagination="handlePageChange"
           :size="10"
@@ -92,7 +92,7 @@
                   >{{ item.name }}</el-col
                 >
                 <el-col :span="18" style="padding:0 5px">{{
-                  item.data
+                  item.detail
                 }}</el-col>
               </el-row>
             </el-col>
@@ -119,18 +119,15 @@ export default {
       dialogFormVisible: false,
       tableData: [{ username: "111" }],
       statusList: [
-        { label: "启动", value: 1 },
-        { label: "建账", value: 2 },
-        { label: "充值", value: 3 },
-        { label: "异常", value: 4 },
-        { label: "部署", value: 5 }
+        { label: "未启动", value: 0 },
+        { label: "启动", value: 1 }
       ],
       search: {},
       pageshow: true,
       page: {
         pageSize: 10,
         total: 20,
-        currentPage: 1
+        page: 1
       },
       detail: [
         {
@@ -215,21 +212,23 @@ export default {
     },
     async getNode() {
       const payload = {
-        page: this.page.currentPage,
-        size: this.page.pageSize,
+        page: this.page.page,
+        pageSize: this.page.pageSize,
         ip: this.search.ip,
-        name: this.search.name,
+        ethereum: this.search.ethereum,
         status: this.search.status
       };
       for (let key in payload) {
-        if (!payload[key]) {
+        if (!payload[key] && payload[key] !== 0) {
           delete payload[key];
         }
       }
       try {
         const res = await getNodeList(payload);
-        if (res.status == 1) {
-          this.tableData = res.result;
+        if (res.code == 200) {
+          const { list, ...page } = res.result;
+          this.tableData = list;
+          this.page = page;
         } else {
           throw new Error(res.message);
         }
@@ -240,8 +239,11 @@ export default {
     async getDetail(query) {
       try {
         const res = await getNodeDetail({ ...query });
-        if (res.status == 1) {
-          this.detail = res.result;
+        if (res.code == 200) {
+          this.detail = this.detail.map(item => {
+            item.detail = res.result[item.data];
+            return item;
+          });
         } else {
           throw new Error(res.message);
         }

@@ -6,8 +6,8 @@
         <el-col :span="24">
           <el-input
             ref="nameSelect"
-            placeholder="请输入主机名称"
-            v-model="search.name"
+            placeholder="请输入以太坊地址"
+            v-model="search.ethereum"
             style="width:220px; height:28px;"
             @keyup.enter.native="searchQuery"
           ></el-input>
@@ -23,7 +23,11 @@
     </div>
     <div class="table_container">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="Chequename" label="节点名称"></el-table-column>
+        <el-table-column
+          prop="ethereum"
+          label="以太坊地址"
+          :show-overflow-tooltip="true"
+        ></el-table-column>
         <el-table-column prop="ip" label="ip地址"></el-table-column>
         <el-table-column prop="hash" label="受益人"></el-table-column>
         <el-table-column prop="issued" label="发送方(peer)"></el-table-column>
@@ -37,7 +41,6 @@
         <el-table-column prop="timestamp" label="时间"></el-table-column>
         <el-table-column fixed="right" label="操作" width="180">
           <template slot-scope="scope">
-            <el-button type="text" size="small">删除</el-button>
             <el-button @click="handleClick(scope.row)" type="text" size="small"
               >查看详情</el-button
             >
@@ -48,7 +51,7 @@
         <pagination
           v-if="pageshow && page.total > 0"
           :total="page.total"
-          :page.sync="page.currentPage"
+          :page.sync="page.page"
           :limit.sync="page.pageSize"
           @pagination="handlePageChange"
           :size="10"
@@ -103,7 +106,7 @@ export default {
       page: {
         pageSize: 10,
         total: 20,
-        currentPage: 1
+        page: 1
       },
       detail: [
         {
@@ -184,15 +187,15 @@ export default {
       this.getCheque();
     },
     searchQuery() {
-      this.getNode();
+      this.getCheque();
     },
     async getCheque() {
       try {
         const payload = {
-          page: this.page.currentPage,
-          size: this.page.pageSize,
+          page: this.page.page,
+          pageSize: this.page.pageSize,
           ip: this.search.ip,
-          name: this.search.name
+          ethereum: this.search.ethereum
         };
         for (let key in payload) {
           if (!payload[key]) {
@@ -200,7 +203,7 @@ export default {
           }
         }
         const res = await getChequeList(payload);
-        if (res.status == 1) {
+        if (res.code == 200) {
           this.tableData = [];
           res.data.forEach(item => {
             const tableItem = {
@@ -221,8 +224,10 @@ export default {
     async getDetail(query) {
       try {
         const res = await getChequeDetail({ ...query });
-        if (res.status == 1) {
-          this.detail = res.result;
+        if (res.code == 200) {
+          const { list, ...page } = res.result;
+          this.tableData = list;
+          this.page = page;
         } else {
           throw new Error(res.message);
         }
