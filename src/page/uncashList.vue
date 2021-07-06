@@ -9,15 +9,17 @@
             placeholder="请输入以太坊地址"
             v-model="search.ethereum"
             style="width:220px; height:28px;"
-            @keyup.enter.native="searchQuery"
+            clearable
           ></el-input>
           <el-input
             ref="nameSelect"
             placeholder="请输入ip地址"
             v-model="search.ip"
             style="width:220px; height:28px;"
-            @keyup.enter.native="searchQuery"
+            clearable
           ></el-input>
+          <el-button type="primary" @click="searchQuery">查询</el-button>
+          <el-button @click="resetQuery">重置</el-button>
         </el-col>
       </el-row>
     </div>
@@ -36,9 +38,18 @@
           label="支票薄（chequebook）"
           width="180"
         ></el-table-column>
-        <el-table-column prop="depth" label="面额（payout）"></el-table-column>
+        <el-table-column
+          prop="depth"
+          label="面额（payout）"
+          width="150"
+        ></el-table-column>
         <el-table-column prop="depth" label="今日新增面额"></el-table-column>
-        <el-table-column prop="timestamp" label="时间"></el-table-column>
+        <el-table-column
+          prop="timestamp"
+          label="时间"
+          width="180"
+          :show-overflow-tooltip="true"
+        ></el-table-column>
         <el-table-column fixed="right" label="操作" width="180">
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text" size="small"
@@ -70,11 +81,11 @@
             >
               <el-row style="height:60px;line-height:60px;">
                 <el-col
-                  :span="6"
+                  :span="8"
                   style="background:#abd5f2;text-align:center"
                   >{{ item.name }}</el-col
                 >
-                <el-col :span="18" style="padding:0 5px">{{
+                <el-col :span="16" style="padding:0 5px">{{
                   item.detail
                 }}</el-col>
               </el-row>
@@ -186,7 +197,12 @@ export default {
     handlePageChange(val) {
       this.getCheque();
     },
+    resetQuery() {
+      this.search = {};
+      this.searchQuery();
+    },
     searchQuery() {
+      this.page.page = 1;
       this.getCheque();
     },
     async getCheque() {

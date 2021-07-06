@@ -8,15 +8,15 @@
             ref="nameSelect"
             placeholder="请输入以太坊地址"
             v-model="search.ethereum"
+            clearable
             style="width:220px; height:28px;"
-            @keyup.enter.native="searchQuery"
           ></el-input>
           <el-input
             ref="nameSelect"
             placeholder="请输入ip地址"
             v-model="search.ip"
+            clearable
             style="width:220px; height:28px;"
-            @keyup.enter.native="searchQuery"
           ></el-input>
           <el-select
             v-model="search.status"
@@ -24,7 +24,6 @@
             placeholder="请选择节点状态"
             clearable
             style="width:220px; height:28px;"
-            @change="searchQuery"
           >
             <el-option
               v-for="item in statusList"
@@ -33,16 +32,14 @@
               :value="item.value"
             ></el-option>
           </el-select>
+          <el-button type="primary" @click="searchQuery">查询</el-button>
+          <el-button @click="resetQuery">重置</el-button>
         </el-col>
       </el-row>
     </div>
     <div class="table_container">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column
-          prop="username"
-          label="归属用户"
-          width="180"
-        ></el-table-column>
+        <el-table-column prop="username" label="归属用户"></el-table-column>
         <el-table-column
           prop="ethereum"
           label="以太坊地址"
@@ -52,10 +49,19 @@
         <el-table-column prop="ip" label="ip地址"></el-table-column>
         <el-table-column prop="auth" label="权限"></el-table-column>
         <el-table-column prop="version" label="版本"></el-table-column>
-        <el-table-column prop="depth" label="BZZ数量"></el-table-column>
+        <el-table-column prop="bzz" label="BZZ数量"></el-table-column>
         <el-table-column prop="peers" label="连接数"></el-table-column>
-        <el-table-column prop="uncash" label="未提取支票数量"></el-table-column>
-        <el-table-column prop="timestamp" label="交付时间"></el-table-column>
+        <el-table-column
+          prop="uncash"
+          label="未提取支票数量"
+          width="129"
+        ></el-table-column>
+        <el-table-column
+          prop="timestamp"
+          label="交付时间"
+          width="180"
+          :show-overflow-tooltip="true"
+        ></el-table-column>
         <el-table-column fixed="right" label="操作" width="180">
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text" size="small"
@@ -87,11 +93,11 @@
             >
               <el-row style="height:60px;line-height:60px;">
                 <el-col
-                  :span="6"
+                  :span="8"
                   style="background:#abd5f2;text-align:center"
                   >{{ item.name }}</el-col
                 >
-                <el-col :span="18" style="padding:0 5px">{{
+                <el-col :span="16" style="padding:0 5px">{{
                   item.detail
                 }}</el-col>
               </el-row>
@@ -207,7 +213,12 @@ export default {
     handlePageChange(val) {
       this.getNode();
     },
+    resetQuery() {
+      this.search = {};
+      this.searchQuery();
+    },
     searchQuery() {
+      this.page.page = 1;
       this.getNode();
     },
     async getNode() {

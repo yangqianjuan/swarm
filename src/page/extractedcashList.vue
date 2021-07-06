@@ -9,15 +9,18 @@
             placeholder="请输入以太坊地址"
             v-model="search.ethereum"
             style="width:220px; height:28px;"
-            @keyup.enter.native="searchQuery"
+            clearable
           ></el-input>
           <el-input
             ref="nameSelect"
             placeholder="请输入ip地址"
             v-model="search.ip"
             style="width:220px; height:28px;"
-            @keyup.enter.native="searchQuery"
+            clearable
           ></el-input>
+
+          <el-button type="primary" @click="searchQuery">查询</el-button>
+          <el-button @click="resetQuery">重置</el-button>
         </el-col>
       </el-row>
     </div>
@@ -179,7 +182,12 @@ export default {
       this.getDetail({ id: row.id });
     },
     handleClickTab() {},
+    resetQuery() {
+      this.search = {};
+      this.searchQuery();
+    },
     searchQuery() {
+      this.page.page = 1;
       this.getCheque();
     },
     handlePageChange(val) {

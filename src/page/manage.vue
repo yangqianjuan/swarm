@@ -24,15 +24,18 @@
             <i class="el-icon-menu"></i>公告中心
           </el-menu-item> -->
           <el-menu-item index="nodeLook">
-            <i class="el-icon-menu"></i>节点查看
+            <i class="el-icon-s-marketing"></i>节点查看
           </el-menu-item>
-          <el-submenu index="2">
+          <el-menu-item index="uncashList">
+            <i class="el-icon-tickets"></i>有效支票列表
+          </el-menu-item>
+          <!-- <el-submenu index="2">
             <template slot="title">
               <i class="el-icon-document"></i>有效支票列表
             </template>
             <el-menu-item index="uncashList">未提交支票</el-menu-item>
             <el-menu-item index="extractedcashList">已提取支票</el-menu-item>
-          </el-submenu>
+          </el-submenu> -->
         </el-menu>
       </el-col>
       <el-col :span="20" style="height: 100%;overflow: auto;">
