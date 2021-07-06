@@ -20,9 +20,9 @@
           <el-menu-item index="manage">
             <i class="el-icon-menu"></i>首页
           </el-menu-item>
-          <el-menu-item index="announcementCenter">
+          <!-- <el-menu-item index="announcementCenter">
             <i class="el-icon-menu"></i>公告中心
-          </el-menu-item>
+          </el-menu-item> -->
           <el-menu-item index="nodeLook">
             <i class="el-icon-menu"></i>节点查看
           </el-menu-item>
@@ -36,9 +36,7 @@
         </el-menu>
       </el-col>
       <el-col :span="20" style="height: 100%;overflow: auto;">
-        <keep-alive>
-          <router-view></router-view>
-        </keep-alive>
+        <router-view></router-view>
       </el-col>
     </el-row>
   </div>
@@ -53,7 +51,6 @@ export default {
   }
 };
 </script>
-
 
 <style lang="less" scoped>
 @import "../style/mixin";
@@ -77,6 +74,7 @@ export default {
     }
   }
 }
+
 .manage_page {
 }
 </style>

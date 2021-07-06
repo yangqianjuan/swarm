@@ -3,24 +3,24 @@
     <head-top></head-top>
     <section class="data_section">
       <el-row :gutter="20" style="margin-bottom: 10px;">
-        <el-col :span="4">
+        <el-col :span="6">
           <el-card class="box-card data_list node_num1">
             <div class>
-              <span class="data_num head">节点数：</span>
+              <span class="data_num head">节点数：{{ page.total }}</span>
             </div>
           </el-card>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="6">
           <el-card class="box-card data_list node_num2">
             <div class>
-              <span class="data_num head">已兑换BZZ数量：</span>
+              <span class="data_num head">已兑换BZZ数量：暂无数据支持</span>
             </div>
           </el-card>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="6">
           <el-card class="box-card data_list node_num3">
             <div class>
-              <span class="data_num head">节点故障：</span>
+              <span class="data_num head">节点故障：暂无数据支持</span>
             </div>
           </el-card>
         </el-col>
