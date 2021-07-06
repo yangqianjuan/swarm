@@ -117,7 +117,7 @@ export default {
     return {
       activeName: "detail",
       dialogFormVisible: false,
-      tableData: [{ username: "111" }],
+      tableData: [],
       statusList: [
         { label: "未启动", value: 0 },
         { label: "启动", value: 1 }
@@ -126,7 +126,7 @@ export default {
       pageshow: true,
       page: {
         pageSize: 10,
-        total: 20,
+        total: 0,
         page: 1
       },
       detail: [
@@ -139,8 +139,8 @@ export default {
           data: "ip"
         },
         {
-          name: "所属大洲",
-          data: "overlay"
+          name: "所属城市",
+          data: "city"
         },
         {
           name: "版本号",
@@ -156,11 +156,11 @@ export default {
         },
         {
           name: "支票地址",
-          data: "ethereum"
+          data: "cash_adress"
         },
         {
           name: "钱包地址(dai)",
-          data: "ethereum"
+          data: "purse_adress"
         },
         {
           name: "节点名称",

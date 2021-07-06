@@ -75,7 +75,7 @@
                   >{{ item.name }}</el-col
                 >
                 <el-col :span="18" style="padding:0 5px">{{
-                  item.data
+                  item.detail
                 }}</el-col>
               </el-row>
             </el-col>
@@ -100,12 +100,12 @@ export default {
     return {
       activeName: "detail",
       dialogFormVisible: false,
-      tableData: [{ username: "111" }],
+      tableData: [],
       search: {},
       pageshow: true,
       page: {
         pageSize: 10,
-        total: 20,
+        total: 0,
         page: 1
       },
       detail: [
@@ -118,8 +118,8 @@ export default {
           data: "ip"
         },
         {
-          name: "所属大洲",
-          data: "overlay"
+          name: "所属城市",
+          data: "city"
         },
         {
           name: "版本号",
@@ -135,11 +135,11 @@ export default {
         },
         {
           name: "支票地址",
-          data: "ethereum"
+          data: "cash_adress"
         },
         {
           name: "钱包地址(dai)",
-          data: "ethereum"
+          data: "purse_adress"
         },
         {
           name: "节点名称",
@@ -180,7 +180,7 @@ export default {
       // this.selectTable = row;
       console.log(row);
       this.dialogFormVisible = true;
-      this.getDetail({ ip: row.ip, ethereum: row.ethereum });
+      this.getDetail({ id: row.id });
     },
     handleClickTab() {},
     handlePageChange(val) {
@@ -204,16 +204,9 @@ export default {
         }
         const res = await getChequeList(payload);
         if (res.code == 200) {
-          this.tableData = [];
-          res.data.forEach(item => {
-            const tableItem = {
-              create_time: item.create_time,
-              username: item.username,
-              admin: item.admin,
-              city: item.city
-            };
-            this.tableData.push(tableItem);
-          });
+          const { list, ...page } = res.result;
+          this.tableData = list;
+          this.page = page;
         } else {
           throw new Error(res.message);
         }
@@ -225,9 +218,10 @@ export default {
       try {
         const res = await getChequeDetail({ ...query });
         if (res.code == 200) {
-          const { list, ...page } = res.result;
-          this.tableData = list;
-          this.page = page;
+          this.detail = this.detail.map(item => {
+            item.detail = res.result[item.data];
+            return item;
+          });
         } else {
           throw new Error(res.message);
         }

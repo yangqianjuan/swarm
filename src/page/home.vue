@@ -43,23 +43,30 @@
           label="IP地址"
           width="220"
         ></el-table-column>
-        <el-table-column property="status" label="状态"></el-table-column>
+        <el-table-column property="status" label="状态">
+          <template slot-scope="scope">
+            {{ statusList[scope.row.status] }}
+          </template>
+        </el-table-column>
         <el-table-column
           property="uncash"
           label="未提取支票数量"
           width="220"
         ></el-table-column>
-        <el-table-column property="ethereum" label="支票地址"></el-table-column>
+        <el-table-column
+          property="cash_adress"
+          label="支票地址"
+        ></el-table-column>
       </el-table>
       <div class="Pagination" style="text-align: left;margin-top: 10px;">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="page"
-          :page-size="20"
-          layout="total, prev, pager, next"
-          :total="count"
-        ></el-pagination>
+        <pagination
+          v-if="pageshow && page.total > 0"
+          :total="page.total"
+          :page.sync="page.page"
+          :limit.sync="page.pageSize"
+          @pagination="handlePageChange"
+          :size="10"
+        ></pagination>
       </div>
     </div>
   </div>
@@ -73,15 +80,12 @@ import { getNodeList } from "@/api/getData";
 export default {
   data() {
     return {
-      tableData: [
-        {
-          name: "王小虎",
-          ip: "上海市普陀区金沙江路 1518 弄"
-        }
-      ],
+      pageshow: true,
+      statusList: { 0: "未启动", 1: "已启动" },
+      tableData: [],
       page: {
         pageSize: 10,
-        total: 20,
+        total: 0,
         page: 1
       }
     };

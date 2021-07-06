@@ -112,7 +112,7 @@ export default {
     return {
       activeName: "detail",
       dialogFormVisible: false,
-      tableData: [{ username: "111" }],
+      tableData: [],
       statusList: [
         { label: "启动", value: 1 },
         { label: "建账", value: 2 },
@@ -137,7 +137,7 @@ export default {
           data: "ip"
         },
         {
-          name: "所属大洲",
+          name: "所属城市",
           data: "overlay"
         },
         {
@@ -154,11 +154,11 @@ export default {
         },
         {
           name: "支票地址",
-          data: "ethereum"
+          data: "cash_adress"
         },
         {
           name: "钱包地址(dai)",
-          data: "ethereum"
+          data: "purse_adress"
         },
         {
           name: "节点名称",
@@ -196,8 +196,6 @@ export default {
   },
   methods: {
     handleClick(row) {
-      // this.selectTable = row;
-      console.log(row);
       this.dialogFormVisible = true;
       this.getDetail({ ip: row.ip, ethereum: row.ethereum });
     },
