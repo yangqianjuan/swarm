@@ -12,21 +12,28 @@
             </el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input type="password" placeholder="密码" v-model="loginForm.password"></el-input>
+            <el-input
+              type="password"
+              placeholder="密码"
+              v-model="loginForm.password"
+            ></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submitForm('loginForm')" class="submit_btn">登录</el-button>
+            <el-button
+              type="primary"
+              @click="submitForm('loginForm')"
+              class="submit_btn"
+              >登录</el-button
+            >
           </el-form-item>
         </el-form>
-        <p class="tip">温馨提示：</p>
-        <p class="tip">未登录过的新用户，自动注册</p>
-        <p class="tip">注册过的用户可凭账号密码登录</p>
       </section>
     </transition>
   </div>
 </template>
 
 <script>
+import md5 from "js-md5";
 import { login, getAdminInfo } from "@/api/getData";
 import { mapActions, mapState } from "vuex";
 import { setToken } from "@/utils/auth";
@@ -62,15 +69,22 @@ export default {
       this.$refs[formName].validate(async valid => {
         if (valid) {
           if (
-            this.loginForm.username === "chuan" &&
+            this.loginForm.username === "admin" &&
             this.loginForm.password === "123456"
           ) {
             this.$message({
               type: "success",
               message: "登录成功"
             });
-            setToken(this.loginForm.username);
+            const token = this.loginForm.username + this.loginForm.password;
+            setToken(md5(token));
             this.$router.push("manage");
+          } else {
+            this.$notify.error({
+              title: "错误",
+              message: "请输入正确的用户名密码",
+              offset: 100
+            });
           }
           // const res = await login({username: this.loginForm.username, password: this.loginForm.password})
           // if (res.code == 200) {
@@ -86,13 +100,6 @@ export default {
           //                 message: res.message
           //             });
           // }
-        } else {
-          this.$notify.error({
-            title: "错误",
-            message: "请输入正确的用户名密码",
-            offset: 100
-          });
-          return false;
         }
       });
     }

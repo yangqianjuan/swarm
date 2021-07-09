@@ -53,13 +53,13 @@ const routes = [
       {
         path: "/uncashList",
         component: uncashList,
-        meta: ["有效支票列表", "未提交支票"]
-      },
-      {
-        path: "/extractedcashList",
-        component: extractedcashList,
-        meta: ["有效支票列表", "已提取支票"]
+        meta: ["有效支票列表"]
       }
+      // {
+      //   path: "/extractedcashList",
+      //   component: extractedcashList,
+      //   meta: ["有效支票列表", "已提取支票"]
+      // }
     ]
   }
 ];
