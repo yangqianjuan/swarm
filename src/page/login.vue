@@ -3,7 +3,7 @@
     <transition name="form-fade" mode="in-out">
       <section class="form_contianer" v-show="showLogin">
         <div class="manage_tip">
-          <p>elm后台管理系统</p>
+          <p>Swarm自动化管理平台</p>
         </div>
         <el-form :model="loginForm" :rules="rules" ref="loginForm">
           <el-form-item prop="username">
@@ -121,7 +121,8 @@ export default {
 <style lang="less" scoped>
 @import "../style/mixin";
 .login_page {
-  background-color: #324057;
+  background:url('../image/bg.jpeg') no-repeat ;
+  background-size:100% 100%;
 }
 .manage_tip {
   position: absolute;
