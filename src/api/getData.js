@@ -1,4 +1,4 @@
-// import request from '@/utils/request'
+import request from '@/utils/request'
 import fetch from "@/config/fetch";
 
 /**
@@ -21,20 +21,36 @@ export const getAdminInfo = () => fetch("/user/info");
  * 获取节点list
  */
 
-export const getNodeList = data => fetch("/api/node/list", data);
+export const getNodeList = data => request({
+  url: "/api/node/list",
+  method: 'get',
+  params: data
+})
 /**
  * 获取节点详情
  */
 
-export const getNodeDetail = data => fetch("/api/node/detail", data);
+export const getNodeDetail = data => request({
+  url: "/api/node/detail",
+  method: 'get',
+  params: data
+})
 
 /**
  * 获取支票list
  */
 
-export const getChequeList = data => fetch("/api/cheque/list", data);
+export const getChequeList = data => request({
+  url: "/api/cheque/list",
+  method: 'get',
+  params: data
+})
 /**
  * 获取支票详情
  */
 
-export const getChequeDetail = data => fetch("/api/cheque/detail", data);
+export const getChequeDetail = data => request({
+  url: "/api/cheque/detail",
+  method: 'get',
+  params: data
+})
