@@ -18,13 +18,13 @@
           active-text-color="#ffd04b"
         >
           <el-menu-item index="manage">
-            <i class="el-icon-menu"></i>首页
+            <i class="el-icon-s-home"></i>首页
           </el-menu-item>
           <!-- <el-menu-item index="announcementCenter">
             <i class="el-icon-menu"></i>公告中心
           </el-menu-item> -->
           <el-menu-item index="nodeLook">
-            <i class="el-icon-s-marketing"></i>节点查看
+            <i class="el-icon-share"></i>节点查看
           </el-menu-item>
           <el-menu-item index="uncashList">
             <i class="el-icon-tickets"></i>有效支票列表
@@ -77,7 +77,9 @@ export default {
     }
   }
 }
-
+.el-menu{
+  border: none
+}
 .manage_page {
 }
 </style>

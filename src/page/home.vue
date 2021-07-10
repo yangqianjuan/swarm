@@ -29,7 +29,7 @@
     <!-- <div>| 全球节点分布</div>
     <tendency :sevenDate="sevenDate" :sevenDay="sevenDay"></tendency>-->
     <div class="table_container">
-      <div>| 节点列表</div>
+      <div class="title"><i class="gang"></i> <span>节点列表</span></div>
       <el-table :data="tableData" highlight-current-row style="width: 100%">
         <el-table-column type="index" width="100"></el-table-column>
         <el-table-column
@@ -166,4 +166,19 @@ export default {
 .wan {
   .sc(16px, #333);
 }
+.title{
+  display: flex;
+    align-items: center;
+
+.gang{
+  display: inline-block;
+    width: 4px;
+    height: 18px;
+    background: #474545;
+    border-radius: 3px;
+    margin-right: 5px
+}
+
+}
+
 </style>
