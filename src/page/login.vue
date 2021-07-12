@@ -57,14 +57,14 @@ export default {
   mounted() {
     this.showLogin = true;
     if (!this.adminInfo.id) {
-      this.getAdminData();
+      // this.getAdminData();
     }
   },
   computed: {
-    ...mapState(["adminInfo"])
+    // ...mapState(["adminInfo"])
   },
   methods: {
-    ...mapActions(["getAdminData"]),
+    // ...mapActions(["getAdminData"]),
     async submitForm(formName) {
       this.$refs[formName].validate(async valid => {
         if (valid) {
@@ -121,8 +121,8 @@ export default {
 <style lang="less" scoped>
 @import "../style/mixin";
 .login_page {
-  background:url('../image/bg.jpeg') no-repeat ;
-  background-size:100% 100%;
+  background: url("../image/bg.jpeg") no-repeat;
+  background-size: 100% 100%;
 }
 .manage_tip {
   position: absolute;

@@ -38,7 +38,7 @@
       </el-row>
     </div>
     <div class="table_container">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" style="width: 100%" v-loading="isLoading">
         <el-table-column prop="username" label="归属用户"></el-table-column>
         <el-table-column
           prop="ethereum"
@@ -123,6 +123,7 @@ export default {
     return {
       activeName: "detail",
       dialogFormVisible: false,
+      isLoading: false,
       tableData: [],
       statusList: [
         { label: "未启动", value: 0 },
@@ -222,6 +223,7 @@ export default {
       this.getNode();
     },
     async getNode() {
+      this.isLoading = true;
       const payload = {
         page: this.page.page,
         pageSize: this.page.pageSize,
@@ -243,7 +245,9 @@ export default {
         } else {
           throw new Error(res.message);
         }
+        this.isLoading = false;
       } catch (err) {
+        this.isLoading = false;
         console.log("获取数据失败", err);
       }
     },

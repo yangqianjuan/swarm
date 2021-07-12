@@ -44,7 +44,7 @@ export default {
     ...mapState(["adminInfo"])
   },
   methods: {
-    ...mapActions(["getAdminData"]),
+    // ...mapActions(["getAdminData"]),
     async handleCommand(command) {
       if (command == "home") {
         this.$router.push("/manage");

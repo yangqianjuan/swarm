@@ -30,7 +30,12 @@
     <tendency :sevenDate="sevenDate" :sevenDay="sevenDay"></tendency>-->
     <div class="table_container">
       <div class="title"><i class="gang"></i> <span>节点列表</span></div>
-      <el-table :data="tableData" highlight-current-row style="width: 100%">
+      <el-table
+        :data="tableData"
+        highlight-current-row
+        style="width: 100%"
+        v-loading="isLoading"
+      >
         <el-table-column type="index" width="100"></el-table-column>
         <el-table-column
           prop="ethereum"
@@ -81,6 +86,7 @@ export default {
   data() {
     return {
       pageshow: true,
+      isLoading: false,
       statusList: { 0: "未启动", 1: "已启动" },
       tableData: [],
       page: {
@@ -102,6 +108,7 @@ export default {
   computed: {},
   methods: {
     async getNode() {
+      this.isLoading = true;
       try {
         const res = await getNodeList({
           page: this.page.page,
@@ -114,7 +121,9 @@ export default {
         } else {
           throw new Error(res.message);
         }
+        this.isLoading = false;
       } catch (err) {
+        this.isLoading = false;
         console.log("获取数据失败", err);
       }
     },
@@ -166,19 +175,17 @@ export default {
 .wan {
   .sc(16px, #333);
 }
-.title{
+.title {
   display: flex;
-    align-items: center;
+  align-items: center;
 
-.gang{
-  display: inline-block;
+  .gang {
+    display: inline-block;
     width: 4px;
     height: 18px;
     background: #474545;
     border-radius: 3px;
-    margin-right: 5px
+    margin-right: 5px;
+  }
 }
-
-}
-
 </style>

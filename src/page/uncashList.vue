@@ -24,7 +24,7 @@
       </el-row>
     </div>
     <div class="table_container">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" style="width: 100%" v-loading="isLoading">
         <el-table-column
           prop="ethereum"
           label="以太坊地址"
@@ -111,6 +111,7 @@ export default {
     return {
       activeName: "detail",
       dialogFormVisible: false,
+      isLoading: false,
       tableData: [],
       search: {},
       pageshow: true,
@@ -206,6 +207,7 @@ export default {
       this.getCheque();
     },
     async getCheque() {
+      this.isLoading = true;
       try {
         const payload = {
           page: this.page.page,
@@ -226,8 +228,10 @@ export default {
         } else {
           throw new Error(res.message);
         }
+        this.isLoading = false;
       } catch (err) {
         console.log("获取数据失败", err);
+        this.isLoading = false;
       }
     },
     async getDetail(query) {
