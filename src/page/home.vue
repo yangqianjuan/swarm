@@ -188,4 +188,7 @@ export default {
     margin-right: 5px;
   }
 }
+.table_container {
+  padding: 20px;
+}
 </style>
